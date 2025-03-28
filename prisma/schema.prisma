@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Change to your database provider (e.g., "postgresql", "mysql")
+  url      = env("DATABASE_URL") // Ensure DATABASE_URL is set in your .env file
+}
+
+model Device {
+  id         Int      @id @default(autoincrement())
+  name       String
+  ipAddress  String   @map("ip_address") // Matches the `ip_address` field in CreateDeviceDto
+  type       String
+  isActive   Boolean  @map("is_active")  // Matches the `is_active` field in CreateDeviceDto
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  networkId  Int?     // Foreign key to Network
+  network    Network? @relation(fields: [networkId], references: [id])
+}
+
+model Network {
+  id         Int      @id @default(autoincrement())
+  name       String
+  type       String
+  devices    Device[] // One-to-many relationship with Device
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
